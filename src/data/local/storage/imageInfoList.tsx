@@ -34,14 +34,16 @@ const save_info_list = async (files: FileInfoList): Promise<void> => {
 };
 
 // Função para obter informações de um arquivo pelo ID (nota e cnpj)
-export const get_file_info = async (nota: string, cnpj: string): Promise<FileInfo | null> => {
+export const get_img_info = async (nota: string, cnpj: string): Promise<FileInfo> => {
     try {
         const list = await load_info_list();
         const file = list.find(obj => obj.nNota === nota && obj.cnpj === cnpj);
-        return file ? file : null;
-    } catch (err) {
-        console.log(`${err}`);
-        return null;
+        if (!file) {
+            throw Error('Erro ao buscar informações do arquivo')
+        }
+        return file;
+    } catch (err: any) {
+        throw new Error(`${err.message}`)
     }
 };
 
@@ -107,7 +109,7 @@ export const update_file_info = async (file: FileInfo): Promise<boolean> => {
         await save_info_list(updatedFiles);
         return true;
     } catch (err: any) {
-        console.log("Erro ao salvar status: ", err);
+        console.log("Erro ao salvar status: ", err.message);
         return false;
     }
 };

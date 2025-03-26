@@ -1,10 +1,32 @@
-import { Alert, FlatList, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import { Alert, FlatList, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View, ListRenderItem } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ImagePopup } from '@/src/components/tableComponents/components/popUp';
+import { chk_files_to_del } from '@/src/data/local/storage/utils/file/chkFilesToDel';
 import { useRouter } from 'expo-router';
 import { local_file_list } from '@/src/data/local/storage/utils/file/fileListManager';
-import { chk_files_to_del } from '@/src/data/local/storage/utils/file/chkFilesToDel';
-import { ImagePopup } from '@/src/components/tableComponents/components/popUp';
+import { AppPhoto } from '@/src/data/utils/models/appPhoto';
 
+// Tipos
+type TableItem = {
+    status: string;
+    nota: string;
+    serie: string;
+    cnpj: string;
+    path: string;
+    filename: string;
+};
+
+type TableRowProps = {
+    item: TableItem;
+    index: number;
+    showPopup: (index: number) => void;
+    visible: boolean;
+    closePopup: () => void;
+};
+
+type TableHeaderProps = {};
+
+// Constantes de cores
 const COLORS = {
     primary: '#0090CE',
     secondary: '#FFD749',
@@ -12,81 +34,92 @@ const COLORS = {
     black: '#000',
 };
 
-const TableHeader = memo(() => (
+// Componente do Cabeçalho
+const TableHeader: React.FC<TableHeaderProps> = () => (
     <View style={Styles.rowStyle}>
         <Text style={[Styles.title, Styles.cell, Styles.titleText]}>Status</Text>
-        <Text style={[Styles.title, Styles.cell, Styles.titleText]}>Nota</Text>
+        <Text style={[Styles.title, Styles.cell, Styles.titleText]}>Nota Fiscal</Text>
         <Text style={[Styles.title, Styles.cell, Styles.titleText]}>Série</Text>
         <Text style={[Styles.title, Styles.cell, Styles.titleText]}>CNPJ</Text>
-        <Text style={[Styles.title, Styles.cell, Styles.titleText]}>Imagem</Text>
+        <Text style={[Styles.title, Styles.cell, Styles.titleText]}>Foto</Text>
     </View>
-));
+);
 
-interface TableRowProps {
-    item: string;
-    index: number;
-    showPopup: (index: number) => void;
-    visible: boolean;
-    closePopup: () => void;
-}
-
-const TableRow: React.FC<TableRowProps> = memo(({ item, index, showPopup, visible, closePopup }) => (
+// Componente de linha da tabela
+const TableRow: React.FC<TableRowProps> = ({ item, index, showPopup, visible, closePopup }) => (
     <View style={Styles.tabBody}>
         <View style={Styles.rowStyle}>
             <TextInput
                 style={[Styles.data, Styles.cell]}
-                value="Status" // Placeholder value
+                value={item.status}
                 editable={false}
             />
             <TextInput
                 style={[Styles.data, Styles.cell]}
-                value="Nota" // Placeholder value
+                value={item.nota}
                 editable={false}
             />
             <TextInput
                 style={[Styles.data, Styles.cell]}
-                value="Série" // Placeholder value
+                value={item.serie}
                 editable={false}
             />
             <TextInput
                 style={[Styles.data, Styles.cell]}
-                value="CNPJ" // Placeholder value
+                value={item.cnpj}
                 editable={false}
             />
             <Pressable
                 onPress={() => showPopup(index)}
-                style={[Styles.data, Styles.cell]}
+                style={({ pressed }) => [
+                    Styles.data,
+                    Styles.cell,
+                    { opacity: pressed ? 0.5 : 1 }
+                ]}
             >
                 <Image
-                    source={{ uri: item }}
-                    style={{ paddingVertical: 0, width: '30%', height: '15%' }}
+                    source={{ uri: item.path }}
+                    style={{ paddingVertical: 0, width: '20%', height: '10%' }}
                 />
             </Pressable>
             <ImagePopup
                 visible={visible}
                 closePopup={closePopup}
-                image={item}
+                image={item.path}
             />
         </View>
     </View>
-));
+);
 
-const Table: React.FC = () => {
+export default function Table() {
     const navigation = useRouter();
-    const [data, setData] = useState<string[]>([]);
-    const [visible, setVisible] = useState<number>(0);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [data, setData] = useState<TableItem[]>([]);
+    const [visible, setVisible] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchData = useCallback(async () => {
         try {
             const file_list = await local_file_list();
-            setData(file_list);
-        } catch (err: unknown) {
-            if (err instanceof Error) {
-                throw new Error(err.message);
-            } else {
-                throw new Error('Erro desconhecido ao buscar os dados da tabela.');
+            for (const file of file_list) {
+                const [cnpj, nota] = file.split('.')[0].split('_');
+                const appPhoto = new AppPhoto(cnpj, nota)
+                const info: FileInfo = await appPhoto.get_image_info();
+                setData(prevState => [
+                    ...prevState,
+                    {
+                        status: info.status,
+                        nota: info.nNota,
+                        serie: info.serie,
+                        cnpj: info.cnpj,
+                        path: info.uri,
+                        filename: file,
+                    }
+                ]);
+
+
             }
+        } catch (error) {
+            console.error('Error fetching data:', error instanceof Error ? error.message : 'Unknown error');
         }
     }, []);
 
@@ -99,7 +132,7 @@ const Table: React.FC = () => {
     }, []);
 
     const closePopup = useCallback(() => {
-        setVisible(0);
+        setVisible(null);
     }, []);
 
     const onRefresh = useCallback(async () => {
@@ -108,21 +141,17 @@ const Table: React.FC = () => {
         setIsLoading(true);
         try {
             await chk_files_to_del();
-            // >>>>>> await send_data_to_server();
+            //await send_data_to_server();
 
-            navigation.navigate('/(tabs)/table');
-        } catch (err: unknown) {
-            if (err instanceof Error) {
-                Alert.alert('Não foi possivel buscar os dados', err.message);
-            } else {
-                throw new Error('Erro desconhecido ao buscar os dados da tabela.');
-            }
+            navigation.navigate('/(tabs)/table')
+        } catch (err) {
+            Alert.alert('Erro', `Não foi possível atualizar os dados\n${err instanceof Error ? err.message : 'Unknown error'}`);
         } finally {
             setIsLoading(false);
         }
     }, [isLoading, navigation]);
 
-    const renderItem = useCallback(({ item, index }: { item: string; index: number }) => (
+    const renderItem: ListRenderItem<TableItem> = useCallback(({ item, index }) => (
         <TableRow
             item={item}
             index={index}
@@ -143,7 +172,7 @@ const Table: React.FC = () => {
                 ListHeaderComponent={<TableHeader />}
                 data={data}
                 renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item) => item.filename}
                 removeClippedSubviews={true}
                 maxToRenderPerBatch={10}
                 windowSize={10}
@@ -166,11 +195,13 @@ const Table: React.FC = () => {
 const Styles = StyleSheet.create({
     tblPos: {
         flex: 1,
-        marginVertical: '0.5%',
-        marginHorizontal: '3%'
+        backgroundColor: COLORS.primary,
+        paddingVertical: '10%',
+        paddingHorizontal: '3%'
     },
     flatList: {
         flex: 1,
+
         width: '100%'
     },
     tabBody: {
@@ -178,13 +209,13 @@ const Styles = StyleSheet.create({
         width: "100%",
     },
     rowStyle: {
-        flexDirection: 'row',
-        minWidth: '100%',
+        backgroundColor: COLORS.white,
+        width: '100%'
     },
     cell: {
         textAlign: 'center',
         width: '30%',
-        paddingVertical: '1%',
+        paddingVertical: 10,
         minWidth: '30%',
     },
     title: {
@@ -198,12 +229,9 @@ const Styles = StyleSheet.create({
     data: {
         alignItems: 'center',
         backgroundColor: COLORS.white,
-        marginVertical: 0.5,
         borderBottomColor: COLORS.black,
         borderBottomWidth: 1,
         fontSize: 10,
         color: COLORS.black,
     },
 });
-
-export default Table;

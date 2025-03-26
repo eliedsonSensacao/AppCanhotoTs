@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system';
 import { resizeImage } from './resizeImg';
 import { generate_path, get_images_path } from '../storagePath/storagePath';
 import { get_local_file } from '../file/getFile';
-import { add_file_info, get_file_info, rm_from_infoList, update_file_info } from '../../imageInfoList';
+import { add_file_info, get_img_info, rm_from_infoList, update_file_info } from '../../imageInfoList';
 import { resolve_date } from '../date/resolveDate';
 import { get_device_name } from '@/src/Config/configFunctions';
 
@@ -34,7 +34,7 @@ export async function save_image(uri: string, cnpj: string, n_nota: string, seri
 export async function replace_image(uri: string, cnpj: string, n_nota: string, serie: string) {
     try {
         const old_image = await get_local_file(n_nota, cnpj);
-        const oldFileInfo = await get_file_info(n_nota, cnpj);
+        const oldFileInfo = await get_img_info(n_nota, cnpj);
 
         if (!old_image || !oldFileInfo) {
             throw new Error(`Arquivo com CNPJ ${cnpj} e nota ${n_nota} não encontrado.`);

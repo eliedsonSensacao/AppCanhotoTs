@@ -1,18 +1,23 @@
-import { NotasContext, NotasContextType } from '@/src/Context/notaContext';
+import { useNotasContext } from '@/src/Context/notaContext';
 import { Alert, Pressable, Text } from 'react-native';
 import { useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { AppPhoto } from '@/src/data/utils/models/appPhoto';
 
 export default function SaveButton() {
     const navigation = useRouter();
-    const { dadosNota, clearDadosNota } = useContext(NotasContext as React.Context<NotasContextType>)
+    const { dadosNota, clearDadosNota } = useNotasContext();
     const [isPressed, setIsPressed] = useState(false);
 
     const salvar = async () => {
         try {
-            console.log()
-            //await store_data(dadosNota.cnpj, dadosNota.serie, dadosNota.n_nota, dadosNota.img_uri);
+            if (!dadosNota.cnpj || !dadosNota.n_nota) {
+                throw new Error("Não há dados para salvar")
+            }
+            const photo: AppPhoto = new AppPhoto(dadosNota.cnpj, dadosNota.n_nota, dadosNota.img_uri);
+            photo.store();
+
         } catch (err: any) {
             Alert.alert("Erro ao salvar", err.message)
         } finally {
@@ -45,7 +50,7 @@ const Styles = StyleSheet.create({
     },
     text: {
         textAlign: 'center',
-        fontSize: 10,
+        fontSize: 15,
         fontWeight: 'bold',
         paddingTop: '15%',
         paddingBottom: '15%',
