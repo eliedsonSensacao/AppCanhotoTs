@@ -1,0 +1,14 @@
+{
+    "API": {
+        "url": "",
+        "body_encript_key": "ManiaDeSerLeiteiro441$"
+    },
+    "DEVICE": {
+        "name": "",
+        "passwd": "",
+        "token": ""
+    },
+    "ADMIN": {
+        "passwd": "0000"
+    }
+}
