@@ -7,31 +7,36 @@ import HandlePermissions from '@/src/functions/permissionsHandlers';
 import { filterCodeBar } from '@/src/functions/Camera/scripts/barCodeFilter';
 
 export default function BarcodeScanner() {
-    const cameraRef = useRef<CameraView>(null);
     const navigation = useRouter();
-    const checkPermissions = HandlePermissions();
+    const cameraRef = useRef<CameraView>(null);
 
     useEffect(() => {
         const verifyPermissions = async () => {
-            const hasPermissions = await checkPermissions();
-            if (!hasPermissions) {
-                navigation.navigate('/(tabs)/form');
-            }
+            const hasPermissions = HandlePermissions();
+            do {
+                if (!hasPermissions) {
+                    navigation.navigate('/(tabs)/form');
+                }
+            } while (!hasPermissions)
+
         };
         verifyPermissions();
-    }, [checkPermissions, navigation]);
+    }, []);
 
     const { salvarDadosNota } = useNotasContext()
 
     const handleBarCodeScanned = async ({ data }: BarcodeScanningResult) => {
         try {
             const codeBarData = await filterCodeBar(data);
-            console.log(codeBarData)
             salvarDadosNota(codeBarData.filteredCnpj, codeBarData.filteredSerie, codeBarData.filteredNota);
         } catch (err: any) {
             Alert.alert("Erro", err.message)
         } finally {
+            if (cameraRef.current) {
+                cameraRef.current.pausePreview()
+            }
             navigation.navigate('/(tabs)/form')
+
         }
     };
 

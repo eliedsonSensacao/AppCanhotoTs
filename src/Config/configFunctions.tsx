@@ -1,22 +1,8 @@
 import * as SecureStore from "expo-secure-store";
 import initialConfig from "./config.json";
+import { ConfigType } from "../data/utils/interfaces/interfaces";
 
 const CONFIG_KEY = "APP_CONFIG";
-
-interface ConfigType {
-    API: {
-        url: string;
-        body_encript_key: string;
-    };
-    DEVICE: {
-        name: string;
-        passwd: string;
-        token: string;
-    };
-    ADMIN: {
-        passwd: string;
-    };
-}
 
 const saveToSecureStore = async (key: string, value: any) => {
     await SecureStore.setItemAsync(key, JSON.stringify(value));
@@ -104,5 +90,16 @@ export const get_admin_passwd = async (): Promise<string> => {
 export const set_admin_passwd = async (passwd: string): Promise<void> => {
     const config = await loadConfig();
     config.ADMIN.passwd = passwd;
+    await saveConfig(config);
+};
+
+export const get_conection_method = async (): Promise<string> => {
+    const config = await loadConfig();
+    return config.API.method;
+};
+
+export const set_conection_method = async (method: string): Promise<void> => {
+    const config = await loadConfig();
+    config.API.method = method;
     await saveConfig(config);
 };

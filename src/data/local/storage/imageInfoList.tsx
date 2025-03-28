@@ -1,4 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ImageStatus } from "../../utils/enums/enums";
+import { FileInfo } from "../../utils/interfaces/interfaces";
 
 const STORAGE_KEY = "@file_list";
 

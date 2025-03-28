@@ -6,7 +6,7 @@ export default function BarCodeButton() {
     const router = useRouter();
 
     return (
-        <Pressable style={styles.btnBar} onPress={() => router.push('/(tabs)/barcodeScanner')}>
+        <Pressable style={styles.btnBar} onPress={() => router.replace('/(tabs)/barcodeScanner')}>
             <FontAwesome6 name="barcode" size={24} color="black" />
         </Pressable>
     );

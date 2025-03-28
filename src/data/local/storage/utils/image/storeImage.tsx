@@ -1,11 +1,13 @@
 
 import * as FileSystem from 'expo-file-system';
 import { resizeImage } from './resizeImg';
-import { generate_path, get_images_path } from '../storagePath/storagePath';
+import { generate_path, get_image_path } from '../storagePath/storagePath';
 import { get_local_file } from '../file/getFile';
 import { add_file_info, get_img_info, rm_from_infoList, update_file_info } from '../../imageInfoList';
 import { resolve_date } from '../date/resolveDate';
 import { get_device_name } from '@/src/Config/configFunctions';
+import { ImageStatus } from '@/src/data/utils/enums/enums';
+import { FileInfo } from '@/src/data/utils/interfaces/interfaces';
 
 export async function save_image(uri: string, cnpj: string, n_nota: string, serie: string) {
     try {
@@ -50,7 +52,7 @@ export async function replace_image(uri: string, cnpj: string, n_nota: string, s
             deviceName: await get_device_name()
         }
 
-        const file_path = await get_images_path(old_image);
+        const file_path = await get_image_path(old_image);
 
         const destinationPath = `${FileSystem.documentDirectory}images/${cnpj}_${n_nota}.JPEG`;
         await FileSystem.deleteAsync(file_path, { idempotent: true });

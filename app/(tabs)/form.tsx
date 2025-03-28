@@ -18,11 +18,11 @@ export default function SendForm() {
   const onRefresh = async () => {
     try {
       setIsRefreshing(true)
+      clearDadosNota();
       navigation.replace('/(tabs)/form')
     } catch (err: any) {
       Alert.alert('Erro ao atualizar a página.', err.message)
     } finally {
-      clearDadosNota();
       setIsRefreshing(false)
     }
   }

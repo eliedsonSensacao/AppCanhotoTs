@@ -1,5 +1,7 @@
 import { get_img_info } from "../../local/storage/imageInfoList";
 import { store } from "../../local/storage/storageManager";
+import { CNPJ } from "../enums/enums"
+import { FileInfo } from "../interfaces/interfaces";
 
 export class AppPhoto {
     cnpj: string;
@@ -13,14 +15,37 @@ export class AppPhoto {
     constructor(cnpj: string, nNota: string, uri?: string);
 
     constructor(cnpj?: string, nNota?: string, uri?: string) {
-        this.cnpj = cnpj || '';
-        this.nNota = nNota || '';
-        this.serie = cnpj == CNPJ.MATRIZ ? ('01') : (cnpj == CNPJ.FILIAL ? ('06') : (''));
-        this.uri = uri || '';
+        function getSerie() {
+            if (cnpj == CNPJ.MATRIZ) {
+                return '01'
+            } else if (cnpj == CNPJ.FILIAL) {
+                return '06'
+            } else {
+                return ''
+            }
+        }
+        if (cnpj && nNota && uri) {
+            this.cnpj = cnpj;
+            this.nNota = nNota
+            this.serie = getSerie();
+            this.uri = uri;
+        }
+        else {
+            throw new Error('Dado faltante')
+        }
     }
 
     async store(): Promise<void> {
-        await store(this.cnpj, this.nNota, this.serie, this.uri)
+        try {
+            console.log('da')
+            await store(this.cnpj, this.nNota, this.serie, this.uri)
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                throw new Error(`Erro: ${err.message}`)
+            } else {
+                throw new Error('Erro desconhecido');
+            }
+        }
     }
 
     async get_image_info(): Promise<FileInfo> {

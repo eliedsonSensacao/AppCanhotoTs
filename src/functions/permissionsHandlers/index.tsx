@@ -19,7 +19,7 @@ export default function HandlePermissions() {
             }
             return cameraPermission && storagePermission;
         } catch (err: any) {
-            console.log(err.message);
+            console.log(`checkPermissions ${err.message}`);
             return false;
         }
     };

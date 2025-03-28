@@ -1,6 +1,6 @@
 import { useNotasContext } from '@/src/Context/notaContext';
 import { Alert, Pressable, Text } from 'react-native';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AppPhoto } from '@/src/data/utils/models/appPhoto';
@@ -12,14 +12,13 @@ export default function SaveButton() {
 
     const salvar = async () => {
         try {
-            if (!dadosNota.cnpj || !dadosNota.n_nota) {
+            if (!dadosNota.cnpj || !dadosNota.n_nota || !dadosNota.img_uri) {
                 throw new Error("Não há dados para salvar")
             }
-            const photo: AppPhoto = new AppPhoto(dadosNota.cnpj, dadosNota.n_nota, dadosNota.img_uri);
+            const photo = new AppPhoto(dadosNota.cnpj, dadosNota.n_nota, dadosNota.img_uri);
             photo.store();
-
         } catch (err: any) {
-            Alert.alert("Erro ao salvar", err.message)
+            Alert.alert("Erro ao salvar imagem", err.message)
         } finally {
             clearDadosNota();
             navigation.replace('/(tabs)/form');

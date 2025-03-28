@@ -1,22 +1,13 @@
 import { StyleSheet, TextInput, View, Text } from 'react-native';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNotasContext } from '@/src/Context/notaContext';
+import { DadoNotaDisplay } from '@/src/data/utils/interfaces/interfaces';
 
 export default function InfoDisplay() {
 
     const { dadosNota } = useNotasContext()
 
-    interface DadoNota {
-        id: string;
-        text: string;
-        placeholder: string;
-        value: string;
-        length: number;
-    }
-    useEffect(() => {
-        console.log(dadosNota)
-    })
-    const dados: DadoNota[] = [
+    const dados: DadoNotaDisplay[] = [
         { id: 'box-cnpj', text: "CNPJ:", placeholder: '00.000.000/0000-00', value: dadosNota.cnpj ?? '', length: 14 },
         { id: 'box-serie', text: "Serie:", placeholder: '000', value: dadosNota.serie ?? '', length: 3 },
         { id: 'box-nota', text: "Nota:", placeholder: '000.000', value: dadosNota.n_nota ?? '', length: 9 },

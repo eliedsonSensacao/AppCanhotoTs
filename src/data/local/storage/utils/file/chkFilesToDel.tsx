@@ -1,3 +1,4 @@
+import { ImageStatus } from "@/src/data/utils/enums/enums";
 import { get_img_date, get_img_status } from "../../imageInfoList";
 import { date_diff } from "../date/getDateDiff";
 import { resolve_date } from "../date/resolveDate";

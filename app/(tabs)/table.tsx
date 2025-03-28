@@ -5,6 +5,7 @@ import { chk_files_to_del } from '@/src/data/local/storage/utils/file/chkFilesTo
 import { useRouter } from 'expo-router';
 import { local_file_list } from '@/src/data/local/storage/utils/file/fileListManager';
 import { AppPhoto } from '@/src/data/utils/models/appPhoto';
+import { FileInfo } from '@/src/data/utils/interfaces/interfaces';
 
 // Tipos
 type TableItem = {
@@ -102,7 +103,7 @@ export default function Table() {
             const file_list = await local_file_list();
             for (const file of file_list) {
                 const [cnpj, nota] = file.split('.')[0].split('_');
-                const appPhoto = new AppPhoto(cnpj, nota)
+                const appPhoto = new AppPhoto(cnpj, nota);
                 const info: FileInfo = await appPhoto.get_image_info();
                 setData(prevState => [
                     ...prevState,

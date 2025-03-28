@@ -1,7 +1,8 @@
 {
     "API": {
         "url": "",
-        "body_encript_key": "ManiaDeSerLeiteiro441$"
+        "body_encript_key": "ManiaDeSerLeiteiro441$",
+        "method": "http"
     },
     "DEVICE": {
         "name": "",

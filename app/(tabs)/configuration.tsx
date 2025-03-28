@@ -1,26 +1,31 @@
 
-import { View, TextInput, StyleSheet, ScrollView, RefreshControl, Text, Alert } from 'react-native';
+import { View, TextInput, StyleSheet, ScrollView, RefreshControl, Text, Alert, Pressable } from 'react-native';
 import { Picker } from '@react-native-picker/picker'
 
 import React, { useEffect, useState } from 'react';
+import { get_api_url, get_conection_method, get_device_name, get_device_passwd } from '@/src/Config/configFunctions';
+import { PasswdPopUp } from '@/src/components/ConfigurationComponents/components/popUp';
 
 export default function SettingsScreen() {
     const [deviceName, setDeviceName] = useState('');
     const [url, setUrl] = useState('');
     const [passwd, setPasswd] = useState('');
+    const [method, setMethod] = useState('');
     const [visible, setVisible] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [httpMethod, setHttpMethod] = useState<string | undefined>();
+
+    async function load_info() {
+        const stored_name = await get_device_name();
+        const stored_passwd = await get_device_passwd();
+        const stored_url = await get_api_url();
+        const stored_method = await get_conection_method();
+        setDeviceName(stored_name);
+        setPasswd(stored_passwd);
+        setUrl(stored_url);
+        setMethod(stored_method)
+    }
+
     useEffect(() => {
-        async function load_info() {
-            //const stored_name = await get_device_name();
-            // const stored_passwd = await get_device_passwd();
-            //const stored_url = await get_api_url();
-            //setDeviceName(stored_name);
-            // setPasswd(stored_passwd);
-            //setUrl(stored_url);
-            console.log('')
-        }
         load_info();
     }, [])
 
@@ -31,18 +36,21 @@ export default function SettingsScreen() {
         setVisible(false)
     }
 
-    const data = {
-        new_deviceName: deviceName,
-        new_url: url,
-        new_passwd: passwd
+    const data: ConfigData = {
+        deviceName: deviceName,
+        url: url,
+        passwd: passwd,
+        method: method
     }
 
     const onRefresh = async () => {
         try {
             setIsRefreshing(true);
+            await load_info();
             //await request_connection();
+
         } catch (err: any) {
-            Alert.alert('Ooops!!!', err.message)
+            Alert.alert('Erro', err.message)
         } finally {
             setIsRefreshing(false)
         }
@@ -74,19 +82,17 @@ export default function SettingsScreen() {
                     value={passwd}
                     onChangeText={(text) => setPasswd(text.trim())}
                 />
-
-
-                {/* <PasswdPopUp
+                <PasswdPopUp
                     visible={visible}
                     closePopup={closePopup}
                     dataToValidate={data}
-                /> */}
+                />
             </View>
             <View style={styles.subContainer}>
                 <Text>Metodo de envio:</Text>
                 <Picker
-                    selectedValue={httpMethod}
-                    onValueChange={(itemValue) => setHttpMethod(itemValue)}
+                    selectedValue={method}
+                    onValueChange={(itemValue) => setMethod(itemValue)}
                 >
                     <Picker.Item label="Http" value="http://" />
                     <Picker.Item label="Https" value="https://" />
@@ -100,7 +106,9 @@ export default function SettingsScreen() {
                 />
             </View>
             <View style={styles.saveBtnPos}>
-                {/* <CustButton style={styles.saveBtn} textStyle={styles.text} text="salvar" onClick={() => showPopup()} /> */}
+                <Pressable style={styles.saveBtn} onPress={() => showPopup()}>
+                    <Text style={styles.text}>Salvar</Text>
+                </Pressable>
             </View>
         </ScrollView>
     );
@@ -146,7 +154,7 @@ const styles = StyleSheet.create({
     saveBtn: {
         elevation: 4,
         justifyContent: 'center',
-        height: '10%',
+        height: '30%',
         width: '40%',
         borderRadius: 3,
         backgroundColor: '#ffea00'
