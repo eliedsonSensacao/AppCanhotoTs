@@ -1,3 +1,4 @@
+import { CNPJ } from "@/src/data/utils/enums/enums";
 
 export const filterCodeBar = async (info: string) => {
     try {

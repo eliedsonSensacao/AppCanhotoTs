@@ -6,7 +6,7 @@ export async function local_file_list() {
     try {
         await generate_path()
         files = await FileSystem.readDirectoryAsync(`${FileSystem.documentDirectory}/images/`)
-        //console.log("local_file list   ",files)
+        //console.log("local_file list   ", files)
         return files;
     } catch (err: any) {
         if (files == null) {

@@ -103,6 +103,7 @@ export default function Table() {
             const file_list = await local_file_list();
             for (const file of file_list) {
                 const [cnpj, nota] = file.split('.')[0].split('_');
+                console.log(cnpj, nota);
                 const appPhoto = new AppPhoto(cnpj, nota);
                 const info: FileInfo = await appPhoto.get_image_info();
                 setData(prevState => [
@@ -120,7 +121,7 @@ export default function Table() {
 
             }
         } catch (error) {
-            console.error('Error fetching data:', error instanceof Error ? error.message : 'Unknown error');
+            console.error('Erro:', error instanceof Error ? error.message : 'Unknown error');
         }
     }, []);
 

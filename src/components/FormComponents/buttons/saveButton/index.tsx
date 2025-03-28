@@ -17,10 +17,11 @@ export default function SaveButton() {
             }
             const photo = new AppPhoto(dadosNota.cnpj, dadosNota.n_nota, dadosNota.img_uri);
             photo.store();
+            clearDadosNota();
         } catch (err: any) {
             Alert.alert("Erro ao salvar imagem", err.message)
         } finally {
-            clearDadosNota();
+
             navigation.replace('/(tabs)/form');
         }
     }

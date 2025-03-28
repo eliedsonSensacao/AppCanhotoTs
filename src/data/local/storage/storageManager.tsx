@@ -6,7 +6,6 @@ import { ValidateStatus } from '../../utils/enums/enums';
 
 export const store = async (cnpj: string, n_nota: string, serie: string, uri: string) => {
     try {
-        console.log('iniciando armazenamento')
         const validate = await validate_data(cnpj, n_nota);
         if (validate == ValidateStatus.EXISTENTE) {
             Alert.alert("Nota já armazenada!", "Deseja substituir a imagem antiga?\n\nEsta ação não pode ser desfeita!", [

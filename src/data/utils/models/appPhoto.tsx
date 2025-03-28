@@ -24,11 +24,12 @@ export class AppPhoto {
                 return ''
             }
         }
-        if (cnpj && nNota && uri) {
+        console.log(cnpj, nNota, uri)
+        if (cnpj && nNota) {
             this.cnpj = cnpj;
             this.nNota = nNota
             this.serie = getSerie();
-            this.uri = uri;
+            this.uri = uri || '';
         }
         else {
             throw new Error('Dado faltante')
@@ -37,7 +38,6 @@ export class AppPhoto {
 
     async store(): Promise<void> {
         try {
-            console.log('da')
             await store(this.cnpj, this.nNota, this.serie, this.uri)
         } catch (err: unknown) {
             if (err instanceof Error) {

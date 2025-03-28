@@ -8,7 +8,7 @@ const STORAGE_KEY = "@file_list";
 type FileInfoList = FileInfo[];
 
 // Variável em cache para armazenar a lista de arquivos
-let cachedFiles: FileInfoList;
+let cachedFiles: FileInfoList = [];
 
 // Função para carregar arquivos do AsyncStorage
 const load_info_list = async (): Promise<FileInfoList> => {
