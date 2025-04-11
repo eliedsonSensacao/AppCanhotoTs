@@ -18,7 +18,7 @@ export default function CamButton() {
     }, [dadosNota?.img_uri]);
 
     return (
-        <Pressable style={styles.button} onPress={() => navigation.replace('/(tabs)/imagePicker')}>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('/(camera)/imagePicker')}>
             {src ? (
                 <Image source={{ uri: src }} style={styles.src} />
             ) : (

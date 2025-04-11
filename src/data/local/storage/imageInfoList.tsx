@@ -12,9 +12,7 @@ let cachedFiles: FileInfoList = [];
 
 // Função para carregar arquivos do AsyncStorage
 const load_info_list = async (): Promise<FileInfoList> => {
-    if (cachedFiles !== null) {
-        return cachedFiles;
-    }
+
     try {
         const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
         cachedFiles = jsonValue ? JSON.parse(jsonValue) : [];
@@ -39,8 +37,10 @@ const save_info_list = async (files: FileInfoList): Promise<void> => {
 export const get_img_info = async (nota: string, cnpj: string): Promise<FileInfo> => {
     try {
         const list = await load_info_list();
-        const file = list.find(obj => obj.nNota === nota && obj.cnpj === cnpj);
+        let file = list.find(obj => obj.nNota === nota && obj.cnpj === cnpj);
+
         if (!file) {
+            console.log('get_img_info ', nota, cnpj, file)
             throw Error('Erro ao buscar informações do arquivo')
         }
         return file;
@@ -56,7 +56,7 @@ export const get_img_status = async (nota: string, cnpj: string): Promise<string
         const file = list.find(obj => obj.nNota === nota && obj.cnpj === cnpj);
         return file ? file.status : null;
     } catch (err) {
-        console.log(`${err}`);
+        console.log(`get_img_status: ${err}`);
         return null;
     }
 };
@@ -68,7 +68,7 @@ export const get_img_date = async (nota: string, cnpj: string): Promise<string |
         const file = list.find(obj => obj.nNota === nota && obj.cnpj === cnpj);
         return file ? file.date : null;
     } catch (err) {
-        console.log(`${err}`);
+        console.log(`get_img_date: ${err}`);
         return null;
     }
 };
@@ -113,7 +113,7 @@ export const update_file_info = async (file: FileInfo): Promise<boolean> => {
     } catch (err: any) {
         console.log("Erro ao salvar status: ", err.message);
         return false;
-    }
+    } 9
 };
 
 // Função para adicionar um arquivo à lista de status

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Modal, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
+import { windowHeight, windowWidth } from '@/src/functions/utils/getScreenDimensions';
 
 interface ImagePopupProps {
     visible: boolean;
@@ -17,9 +18,9 @@ export const ImagePopup: React.FC<ImagePopupProps> = ({ visible, closePopup, ima
                 onRequestClose={closePopup}
             >
                 <View style={styles.modalBackground}>
-                    <View>
+                    <View style={styles.imageView}>
                         <ReactNativeZoomableView
-                            maxZoom={3}
+                            maxZoom={8}
                             minZoom={1}
                             zoomStep={0.5}
                             initialZoom={1}
@@ -28,7 +29,7 @@ export const ImagePopup: React.FC<ImagePopupProps> = ({ visible, closePopup, ima
                             <Image
                                 source={{ uri: image }}
                                 style={styles.image}
-                                resizeMode='stretch'
+                                resizeMode='contain'
                             />
                         </ReactNativeZoomableView>
                         <TouchableOpacity onPress={closePopup} style={styles.button}>
@@ -53,9 +54,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: "#020638"
     },
+    imageView: {
+        width: windowWidth(100),
+        height: windowHeight(100),
+    },
     image: {
-        width: '90%',
-        height: '50%',
+        width: '100%',
+        height: '100%',
     },
     button: {
         backgroundColor: '#007BFF',

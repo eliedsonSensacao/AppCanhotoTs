@@ -1,3 +1,4 @@
+import { Alert } from "react-native";
 import { get_img_info } from "../../local/storage/imageInfoList";
 import { store } from "../../local/storage/storageManager";
 import { CNPJ } from "../enums/enums"
@@ -24,7 +25,6 @@ export class AppPhoto {
                 return ''
             }
         }
-        console.log(cnpj, nNota, uri)
         if (cnpj && nNota) {
             this.cnpj = cnpj;
             this.nNota = nNota
@@ -38,7 +38,7 @@ export class AppPhoto {
 
     async store(): Promise<void> {
         try {
-            await store(this.cnpj, this.nNota, this.serie, this.uri)
+            await store(this.cnpj, this.nNota, this.serie, this.uri);
         } catch (err: unknown) {
             if (err instanceof Error) {
                 throw new Error(`Erro: ${err.message}`)

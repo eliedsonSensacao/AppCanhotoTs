@@ -19,9 +19,10 @@ export async function validate_data(cnpj: string, n_nota: string): Promise<Valid
         }
 
         const file_list: string[] = await local_file_list();
+
         for (const file of file_list) {
-            const nota = file.split('_')[1].split('.')[0];
-            if (nota === n_nota) {
+            const [thisCnpj, nota] = file.split('.')[0].split('_');
+            if (nota === n_nota && thisCnpj === cnpj) {
                 return ValidateStatus.EXISTENTE;
             }
         }

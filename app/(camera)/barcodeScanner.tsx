@@ -1,10 +1,11 @@
-import { BarcodeScanningResult, CameraView } from 'expo-camera';
 import { useNotasContext } from "@/src/Context/notaContext";
+import { filterCodeBar } from "@/src/functions/Camera/scripts/barCodeFilter";
+import HandlePermissions from "@/src/functions/permissionsHandlers";
+import { BarcodeScanningResult, CameraView } from "expo-camera";
+import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Alert, StyleSheet, View } from "react-native";
-import { useRouter } from 'expo-router';
-import HandlePermissions from '@/src/functions/permissionsHandlers';
-import { filterCodeBar } from '@/src/functions/Camera/scripts/barCodeFilter';
+
 
 export default function BarcodeScanner() {
     const navigation = useRouter();
@@ -15,7 +16,7 @@ export default function BarcodeScanner() {
             const hasPermissions = HandlePermissions();
             do {
                 if (!hasPermissions) {
-                    navigation.navigate('/(tabs)/form');
+                    navigation.replace('/(tabs)/form');
                 }
             } while (!hasPermissions)
 
@@ -35,7 +36,7 @@ export default function BarcodeScanner() {
             if (cameraRef.current) {
                 cameraRef.current.pausePreview()
             }
-            navigation.navigate('/(tabs)/form')
+            navigation.replace('/(tabs)/form');
 
         }
     };
@@ -45,7 +46,7 @@ export default function BarcodeScanner() {
             <CameraView
                 ref={cameraRef}
                 style={styles.camera}
-                ratio='4:3'
+                ratio='16:9'
                 barcodeScannerSettings={{
                     barcodeTypes: ['code128'],
                 }}
@@ -61,6 +62,7 @@ export default function BarcodeScanner() {
 
 const styles = StyleSheet.create({
     container: {
+        height: '100%',
         flex: 1,
         justifyContent: 'center',
         backgroundColor: '#000'

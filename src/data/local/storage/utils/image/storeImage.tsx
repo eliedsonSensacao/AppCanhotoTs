@@ -14,12 +14,13 @@ export async function save_image(uri: string, cnpj: string, n_nota: string, seri
         const destinationPath = `${FileSystem.documentDirectory}images/${cnpj}_${n_nota}.JPEG`;
 
         await resize_and_save_image(uri, destinationPath);
+
         const fileInfo: FileInfo = {
             status: ImageStatus.AGUARDANDO_ENVIO,
             cnpj: cnpj,
             nNota: n_nota,
             serie: serie,
-            uri: uri,
+            uri: destinationPath,
             date: await resolve_date(),
             deviceName: await get_device_name()
         }
@@ -35,29 +36,27 @@ export async function save_image(uri: string, cnpj: string, n_nota: string, seri
 
 export async function replace_image(uri: string, cnpj: string, n_nota: string, serie: string) {
     try {
-        const old_image = await get_local_file(n_nota, cnpj);
-        const oldFileInfo = await get_img_info(n_nota, cnpj);
+        const old_image = await get_local_file(cnpj, n_nota);
 
-        if (!old_image || !oldFileInfo) {
+        if (!old_image) {
+            console.log("replace_image: ", old_image)
             throw new Error(`Arquivo com CNPJ ${cnpj} e nota ${n_nota} não encontrado.`);
         }
+        const file_path = await get_image_path(old_image);
+        await FileSystem.deleteAsync(file_path, { idempotent: true });
+
+        const destinationPath = `${FileSystem.documentDirectory}images/${cnpj}_${n_nota}.JPEG`;
 
         const NewFileInfo: FileInfo = {
             status: ImageStatus.AGUARDANDO_ENVIO,
             cnpj: cnpj,
             nNota: n_nota,
             serie: serie,
-            uri: uri,
+            uri: destinationPath,
             date: await resolve_date(),
             deviceName: await get_device_name()
         }
-
-        const file_path = await get_image_path(old_image);
-
-        const destinationPath = `${FileSystem.documentDirectory}images/${cnpj}_${n_nota}.JPEG`;
-        await FileSystem.deleteAsync(file_path, { idempotent: true });
         await resize_and_save_image(uri, destinationPath);
-        await rm_from_infoList(oldFileInfo.nNota, oldFileInfo.cnpj);
         await update_file_info(NewFileInfo);
     } catch (err: any) {
         throw new Error(err.message);
@@ -72,7 +71,6 @@ const resize_and_save_image = async (uri: string, destinationPath: string) => {
             from: resizedImage.uri,
             to: destinationPath
         });
-        return resizedImage.uri;
     } catch (err: any) {
         throw new Error(err.message);
     }

@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import HandlePermissions from '@/src/functions/permissionsHandlers';
 import { useNotasContext } from '@/src/Context/notaContext';
 import { ShotButton } from '@/src/components/CameraComponents/Buttons/shotButton';
+import { windowHeight } from '@/src/functions/utils/getScreenDimensions';
 
 export default function PickupImage() {
     const navigation = useRouter();
@@ -61,11 +62,13 @@ export default function PickupImage() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        
         justifyContent: 'center',
         backgroundColor: '#000'
     },
     camera: {
         flex: 1,
+        height: windowHeight(100),
         flexDirection: 'row',
     }
 });
