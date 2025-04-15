@@ -1,12 +1,11 @@
 
-import BarCodeButton from '@/src/components/CameraComponents/Buttons/BarCodeButton';
-import CamButton from '@/src/components/CameraComponents/Buttons/imgCamButton';
+import BarCodeButton from '@/src/components/screenComponents/Camera/Buttons/BarCodeButton';
+import CamButton from '@/src/components/screenComponents/Camera/Buttons/imgCamButton';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { useNotasContext } from '@/src/Context/notaContext';
-import InfoDisplay from '@/src/components/FormComponents/display';
+import InfoDisplay from '@/src/components/screenComponents/Form/display';
 import { StyleSheet, View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import SaveButton from '@/src/components/globalComponents/buttons/Button';
 import { useState } from 'react';
 import { useLoading } from '@/src/Context/loadingContext';
 import { AppPhoto } from '@/src/data/utils/models/appPhoto';

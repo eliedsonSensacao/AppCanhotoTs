@@ -1,13 +1,10 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import { PermissionResponse, useCameraPermissions } from "expo-camera";
-import { useMediaLibraryPermissions } from "expo-image-picker"
 
 // Definindo os tipos do contexto
 export interface PermissionContextType {
     cameraPermission: boolean;
-    storagePermission: boolean;
     requestCameraPermission: () => Promise<PermissionResponse>;
-    requestStoragePermission: () => Promise<PermissionResponse>;
 }
 
 export const PermissionContext = createContext<PermissionContextType | undefined>(
@@ -22,10 +19,8 @@ export const PermissionProvider: React.FC<PermissionProviderProps> = ({
     children,
 }) => {
     const [cameraPermission, setCameraPermission] = useState<boolean>(false);
-    const [storagePermission, setStoragePermission] = useState<boolean>(false);
 
     const [cameraStatus, requestCameraPermission] = useCameraPermissions();
-    const [storageStatus, requestStoragePermission] = useMediaLibraryPermissions();
 
     useEffect(() => {
 
@@ -34,21 +29,13 @@ export const PermissionProvider: React.FC<PermissionProviderProps> = ({
         } else {
             setCameraPermission(false);
         }
-
-        if (storageStatus?.granted) {
-            setStoragePermission(true);
-        } else {
-            setStoragePermission(false);
-        }
-    }, [cameraStatus, storageStatus]);
+    }, [cameraStatus]);
 
     return (
         <PermissionContext.Provider
             value={{
                 cameraPermission,
-                storagePermission,
-                requestCameraPermission,
-                requestStoragePermission,
+                requestCameraPermission
             }}
         >
             {children}

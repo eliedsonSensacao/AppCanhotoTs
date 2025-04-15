@@ -1,6 +1,6 @@
 import { Alert, FlatList, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View, ListRenderItem } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
-import { ImagePopup } from '@/src/components/tableComponents/components/popUp';
+import { ImagePopup } from '@/src/components/screenComponents/table/components/popUp';
 import { chk_files_to_del } from '@/src/data/local/storage/utils/file/chkFilesToDel';
 import { useRouter } from 'expo-router';
 import { local_file_list } from '@/src/data/local/storage/utils/file/fileListManager';

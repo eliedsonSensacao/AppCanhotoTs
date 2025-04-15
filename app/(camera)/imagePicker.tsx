@@ -3,9 +3,10 @@ import React, { useContext, useEffect, useRef } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { useRouter } from 'expo-router';
 import { useNotasContext } from '@/src/Context/notaContext';
-import { ShotButton } from '@/src/components/CameraComponents/Buttons/shotButton';
+import { ShotButton } from '@/src/components/screenComponents/Camera/Buttons/shotButton';
 import { windowHeight } from '@/src/functions/utils/getScreenDimensions';
 import { PermissionContext } from '@/src/Context/permissionContext';
+import { ComponentCameraView } from '@/src/components/screenComponents/Camera/cameraView';
 
 export default function PickupImage() {
     const navigation = useRouter();
@@ -49,13 +50,8 @@ export default function PickupImage() {
 
     return (
         <View style={styles.container}>
-            <CameraView
-                ref={cameraRef}
-                style={styles.camera}
-                zoom={0}
-            >
-                <ShotButton onPress={takePicture} />
-            </CameraView>
+            <ComponentCameraView ref={cameraRef} />
+            <ShotButton onPress={takePicture} />
         </View>
     );
 }
@@ -66,9 +62,5 @@ const styles = StyleSheet.create({
         height: windowHeight(100),
         justifyContent: 'center',
         backgroundColor: '#000'
-    },
-    camera: {
-        flex: 1,
-        flexDirection: 'row',
     }
 });

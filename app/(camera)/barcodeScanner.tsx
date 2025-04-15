@@ -5,6 +5,7 @@ import { Alert, StyleSheet, View } from "react-native";
 import { useRouter } from 'expo-router';
 import { filterCodeBar } from '@/src/functions/Camera/scripts/barCodeFilter';
 import { PermissionContext } from '@/src/Context/permissionContext';
+import { ComponentCameraView } from '@/src/components/screenComponents/Camera/cameraView';
 
 export default function BarcodeScanner() {
     const { salvarDadosNota } = useNotasContext()
@@ -37,28 +38,58 @@ export default function BarcodeScanner() {
             ]
         } finally {
             navigation.back();
+            if (cameraRef.current)
+                cameraRef.current.pausePreview()
         }
     };
 
     return (
         <View style={styles.container}>
-            <CameraView
-                ref={cameraRef}
-                style={styles.camView}
-                barcodeScannerSettings={{
-                    barcodeTypes: ['code128'],
-                }}
-                onBarcodeScanned={handleBarCodeScanned}
-            />
+            <ComponentCameraView ref={cameraRef} onBarCodeScanned={handleBarCodeScanned} />
+            <View style={styles.overlay}>
+                <View style={styles.maskTop} />
+                <View style={styles.middleRow}>
+                    <View style={styles.maskSide} />
+                    <View style={styles.scanArea} />
+                    <View style={styles.maskSide} />
+                </View>
+                <View style={styles.maskBottom} />
+            </View>
         </View>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    camView: {
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    maskTop: {
         flex: 1,
-    }
-})
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    },
+    middleRow: {
+        flexDirection: 'row',
+        height: '20%',
+    },
+    maskSide: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    },
+    scanArea: {
+        width: '80%',
+        borderColor: '#ffee00',
+        borderWidth: 4,
+        borderRadius: 2,
+        backgroundColor: 'transparent',
+    },
+    maskBottom: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    },
+});

@@ -1,10 +1,10 @@
 
-import { View, TextInput, StyleSheet, ScrollView, RefreshControl, Text, Alert, Pressable } from 'react-native';
+import { View, TextInput, StyleSheet, ScrollView, RefreshControl, Text, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker'
 
 import React, { useEffect, useState } from 'react';
 import { get_api_url, get_conection_method, get_device_name, get_device_passwd } from '@/src/Config/configFunctions';
-import { PasswdPopUp } from '@/src/components/ConfigurationComponents/components/popUp';
+import { PasswdPopUp } from '@/src/components/screenComponents/Config/components/popUp';
 import ComponentButton from '@/src/components/globalComponents/buttons/Button';
 
 export default function SettingsScreen() {

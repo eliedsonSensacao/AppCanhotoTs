@@ -31,7 +31,7 @@ function AppContent() {
               <ActivityIndicator size="large" color="#fff" />
             </View>
           )}
-          <StatusBar style="auto" />
+          <StatusBar hidden />
         </NotasProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
