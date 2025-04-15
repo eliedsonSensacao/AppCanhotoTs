@@ -1,13 +1,13 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
-import { useCameraPermissions } from "expo-camera";
+import { PermissionResponse, useCameraPermissions } from "expo-camera";
 import { useMediaLibraryPermissions } from "expo-image-picker"
 
 // Definindo os tipos do contexto
 export interface PermissionContextType {
     cameraPermission: boolean;
     storagePermission: boolean;
-    requestCameraPermission: () => void;
-    requestStoragePermission: () => void;
+    requestCameraPermission: () => Promise<PermissionResponse>;
+    requestStoragePermission: () => Promise<PermissionResponse>;
 }
 
 export const PermissionContext = createContext<PermissionContextType | undefined>(

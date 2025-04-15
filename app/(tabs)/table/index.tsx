@@ -67,7 +67,7 @@ export default function Table() {
     const navigation = useRouter();
     const [data, setData] = useState<FileInfo[]>([]);
     const [visible, setVisible] = useState<number | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const showPopup = useCallback((index: number) => {
         setVisible(index);
@@ -90,7 +90,7 @@ export default function Table() {
                 )
             }
             setData(infoList);
-            setIsLoading(false);
+            setIsRefreshing(false);
         } catch (error) {
             console.error('Erro:', error instanceof Error ? error.message : 'Unknown error');
         }
@@ -102,9 +102,9 @@ export default function Table() {
     }, [fetchData]);
 
     const onRefresh = useCallback(async () => {
-        if (isLoading) return;
+        if (isRefreshing) return;
 
-        setIsLoading(true);
+        setIsRefreshing(true);
         try {
             await chk_files_to_del();
             //await send_data_to_server();
@@ -113,9 +113,9 @@ export default function Table() {
         } catch (err) {
             Alert.alert('Erro', `Não foi possível atualizar os dados\n${err instanceof Error ? err.message : 'Unknown error'}`);
         } finally {
-            setIsLoading(false);
+            setIsRefreshing(false);
         }
-    }, [isLoading, navigation]);
+    }, [isRefreshing, navigation]);
 
     const renderItem: ListRenderItem<FileInfo> = useCallback(({ item, index }) => (
         <TableRow
@@ -135,7 +135,7 @@ export default function Table() {
                 showsHorizontalScrollIndicator={true}
                 refreshControl={
                     <RefreshControl
-                        refreshing={isLoading}
+                        refreshing={isRefreshing}
                         onRefresh={onRefresh}
                         colors={[COLORS.secondary, COLORS.white]}
                         progressBackgroundColor={COLORS.primary}

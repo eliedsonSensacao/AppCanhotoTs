@@ -1,30 +1,31 @@
 import { CameraCapturedPicture, CameraView } from 'expo-camera';
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { useRouter } from 'expo-router';
-import HandlePermissions from '@/src/functions/permissionsHandlers';
 import { useNotasContext } from '@/src/Context/notaContext';
 import { ShotButton } from '@/src/components/CameraComponents/Buttons/shotButton';
 import { windowHeight } from '@/src/functions/utils/getScreenDimensions';
+import { PermissionContext } from '@/src/Context/permissionContext';
 
 export default function PickupImage() {
     const navigation = useRouter();
     const cameraRef = useRef<CameraView>(null);
     const { salvarUriNota } = useNotasContext();
 
+    const { cameraPermission, requestCameraPermission } = useContext(PermissionContext)!;
+
     useEffect(() => {
-
-        const verifyPermissions = async () => {
-            const hasPermissions = HandlePermissions();
-            do {
-                if (!hasPermissions) {
-                    navigation.navigate('/(tabs)/form');
+        const checkPermissions = async () => {
+            if (!cameraPermission) {
+                const response = await requestCameraPermission();
+                if (!response?.granted) {
+                    Alert.alert("Permissão necessária", "A câmera é necessária para escanear códigos de barras.");
+                    navigation.back();
                 }
-            } while (!hasPermissions)
-
+            }
         };
-        verifyPermissions();
-    }, []);
+        checkPermissions();
+    }, [cameraPermission]);
 
     const takePicture = React.useCallback(async () => {
         try {
@@ -62,13 +63,12 @@ export default function PickupImage() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        
+        height: windowHeight(100),
         justifyContent: 'center',
         backgroundColor: '#000'
     },
     camera: {
         flex: 1,
-        height: windowHeight(100),
         flexDirection: 'row',
     }
 });

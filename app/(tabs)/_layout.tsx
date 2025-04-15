@@ -28,7 +28,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="form"
+        name="form/index"
         options={{
           title: 'Envio de Notas',
           tabBarIcon: ({ color, size }) => (
@@ -37,7 +37,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="table"
+        name="table/index"
         options={{
           title: 'Enviados',
           tabBarIcon: ({ color, size }) => (
@@ -46,7 +46,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="configuration"
+        name="config/index"
         options={{
           title: 'Configurações',
           tabBarIcon: ({ color, size }) => (
@@ -54,7 +54,6 @@ export default function TabLayout() {
           ),
         }}
       />
-
     </Tabs>
   );
 }

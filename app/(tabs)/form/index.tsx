@@ -5,15 +5,20 @@ import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { useNotasContext } from '@/src/Context/notaContext';
 import InfoDisplay from '@/src/components/FormComponents/display';
 import { StyleSheet, View, Alert } from 'react-native';
-import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import SaveButton from '@/src/components/FormComponents/buttons/saveButton';
+import SaveButton from '@/src/components/globalComponents/buttons/Button';
+import { useState } from 'react';
+import { useLoading } from '@/src/Context/loadingContext';
+import { AppPhoto } from '@/src/data/utils/models/appPhoto';
+import ComponentButton from '@/src/components/globalComponents/buttons/Button';
 
 
 export default function SendForm() {
   const navigation = useRouter()
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const { clearDadosNota } = useNotasContext()
+  const { clearDadosNota, dadosNota } = useNotasContext()
+  const { setIsLoading } = useLoading();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
 
   const onRefresh = async () => {
     try {
@@ -24,6 +29,24 @@ export default function SendForm() {
       Alert.alert('Erro ao atualizar a página.', err.message)
     } finally {
       setIsRefreshing(false)
+    }
+  }
+
+  const salvar = async () => {
+    try {
+      setIsLoading(true);
+      if (!dadosNota.cnpj || !dadosNota.n_nota || !dadosNota.img_uri) {
+        throw new Error("Não há dados para salvar")
+      }
+      const photo = new AppPhoto(dadosNota.cnpj, dadosNota.n_nota, dadosNota.img_uri);
+      await photo.store();
+    } catch (err: any) {
+      Alert.alert("Erro ao salvar imagem", err.message)
+      return;
+    } finally {
+      clearDadosNota()
+      navigation.replace('/(tabs)/form')
+      setIsLoading(false)
     }
   }
 
@@ -55,7 +78,7 @@ export default function SendForm() {
       </View>
       {/* Botão Salvar */}
       <View style={Styles.btnSavePos}>
-        <SaveButton />
+        <ComponentButton text='Salvar' onPress={salvar} />
       </View>
     </ScrollView>
   );
@@ -91,8 +114,9 @@ const Styles = StyleSheet.create({
   },
   // botao Salvar
   btnSavePos: {
-    marginVertical: '10%',
-    alignSelf: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: '3%'
   }
 
 })

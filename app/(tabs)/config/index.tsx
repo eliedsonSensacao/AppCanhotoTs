@@ -5,6 +5,7 @@ import { Picker } from '@react-native-picker/picker'
 import React, { useEffect, useState } from 'react';
 import { get_api_url, get_conection_method, get_device_name, get_device_passwd } from '@/src/Config/configFunctions';
 import { PasswdPopUp } from '@/src/components/ConfigurationComponents/components/popUp';
+import ComponentButton from '@/src/components/globalComponents/buttons/Button';
 
 export default function SettingsScreen() {
     const [deviceName, setDeviceName] = useState('');
@@ -15,14 +16,22 @@ export default function SettingsScreen() {
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     async function load_info() {
-        const stored_name = await get_device_name();
-        const stored_passwd = await get_device_passwd();
-        const stored_url = await get_api_url();
-        const stored_method = await get_conection_method();
-        setDeviceName(stored_name);
-        setPasswd(stored_passwd);
-        setUrl(stored_url);
-        setMethod(stored_method)
+        try {
+            const stored_name = await get_device_name();
+            const stored_passwd = await get_device_passwd();
+            const stored_url = await get_api_url();
+            const stored_method = await get_conection_method();
+            setDeviceName(stored_name);
+            setPasswd(stored_passwd);
+            setUrl(stored_url);
+            setMethod(stored_method)
+        } catch (err) {
+            if (err instanceof Error) {
+                throw new Error(err.message)
+            } else {
+                throw new Error('Erro desconhecido ao carregar dados')
+            }
+        }
     }
 
     useEffect(() => {
@@ -89,6 +98,7 @@ export default function SettingsScreen() {
                 />
             </View>
             <View style={styles.subContainer}>
+                <Text style={styles.title}>Conexão</Text>
                 <Text>Metodo de envio:</Text>
                 <Picker
                     selectedValue={method}
@@ -106,9 +116,7 @@ export default function SettingsScreen() {
                 />
             </View>
             <View style={styles.saveBtnPos}>
-                <Pressable style={styles.saveBtn} onPress={() => showPopup()}>
-                    <Text style={styles.text}>Salvar</Text>
-                </Pressable>
+                <ComponentButton text='Salvar' onPress={() => showPopup()} />
             </View>
         </ScrollView>
     );
@@ -124,7 +132,7 @@ const styles = StyleSheet.create({
         elevation: 10,
         backgroundColor: '#eee',
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 5,
         marginVertical: 10
     },
     title: {
@@ -161,6 +169,11 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 10,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        fontWeight: 'bold'
+    },
+    pressed: {
+        backgroundColor: '#cfbe0a',
+        transform: [{ scale: 0.95 }]
     }
 });

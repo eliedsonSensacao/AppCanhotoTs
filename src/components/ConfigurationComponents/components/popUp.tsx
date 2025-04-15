@@ -11,9 +11,8 @@ interface PasswdPopUpProps {
 }
 
 export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, dataToValidate }) => {
-
+    
     const [text, setText] = useState<string>('');
-
     const navigation = useRouter();
 
     const confirm_passwd = async (insertedPass: string) => {
@@ -36,7 +35,7 @@ export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, d
                 await set_device_token('');
                 Alert.alert("Configurações salvas");
                 closePopup();
-                navigation.replace('/(tabs)/configuration');
+                navigation.replace('/(tabs)/config');
             } catch (err: unknown) {
                 if (err instanceof Error) {
                     Alert.alert("Erro ao salvar configuração: ", err.message)

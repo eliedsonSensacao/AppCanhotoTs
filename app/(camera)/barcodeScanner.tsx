@@ -1,43 +1,42 @@
+import { BarcodeScanningResult, CameraView } from 'expo-camera';
 import { useNotasContext } from "@/src/Context/notaContext";
-import { filterCodeBar } from "@/src/functions/Camera/scripts/barCodeFilter";
-import HandlePermissions from "@/src/functions/permissionsHandlers";
-import { BarcodeScanningResult, CameraView } from "expo-camera";
-import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { Alert, StyleSheet, View } from "react-native";
-
+import { useRouter } from 'expo-router';
+import { filterCodeBar } from '@/src/functions/Camera/scripts/barCodeFilter';
+import { PermissionContext } from '@/src/Context/permissionContext';
 
 export default function BarcodeScanner() {
+    const { salvarDadosNota } = useNotasContext()
     const navigation = useRouter();
     const cameraRef = useRef<CameraView>(null);
+    const { cameraPermission, requestCameraPermission } = useContext(PermissionContext)!;
 
     useEffect(() => {
-        const verifyPermissions = async () => {
-            const hasPermissions = HandlePermissions();
-            do {
-                if (!hasPermissions) {
-                    navigation.replace('/(tabs)/form');
+        const checkPermissions = async () => {
+            if (!cameraPermission) {
+                const response = await requestCameraPermission();
+                if (!response?.granted) {
+                    Alert.alert("Permissão necessária", "A câmera é necessária para escanear códigos de barras.");
+                    navigation.back();
                 }
-            } while (!hasPermissions)
-
+            }
         };
-        verifyPermissions();
-    }, []);
-
-    const { salvarDadosNota } = useNotasContext()
+        checkPermissions();
+    }, [cameraPermission]);
 
     const handleBarCodeScanned = async ({ data }: BarcodeScanningResult) => {
         try {
             const codeBarData = await filterCodeBar(data);
             salvarDadosNota(codeBarData.filteredCnpj, codeBarData.filteredSerie, codeBarData.filteredNota);
-        } catch (err: any) {
-            Alert.alert("Erro", err.message)
+        } catch (err) {
+            if (err instanceof Error) {
+                Alert.alert("Erro", err.message)
+            } else[
+                Alert.alert("Erro", "Erro desconhecido")
+            ]
         } finally {
-            if (cameraRef.current) {
-                cameraRef.current.pausePreview()
-            }
-            navigation.replace('/(tabs)/form');
-
+            navigation.back();
         }
     };
 
@@ -45,45 +44,21 @@ export default function BarcodeScanner() {
         <View style={styles.container}>
             <CameraView
                 ref={cameraRef}
-                style={styles.camera}
-                ratio='16:9'
+                style={styles.camView}
                 barcodeScannerSettings={{
                     barcodeTypes: ['code128'],
                 }}
-
                 onBarcodeScanned={handleBarCodeScanned}
-            >
-                <View style={styles.leftContainer} />
-                <View style={styles.rightContainer} />
-            </CameraView>
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        height: '100%',
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: '#000'
-    },
-
-    camera: {
         flex: 1,
     },
-    leftContainer: {
-        flexDirection: 'column',
-        maxHeight: '40%',
+    camView: {
         flex: 1,
-        backgroundColor: '#00000080',
-    },
-    rightContainer: {
-        justifyContent: 'flex-end',
-        display: 'flex',
-        marginTop: '40%',
-        maxHeight: '40%',
-        flex: 1,
-        backgroundColor: '#00000080',
-    },
-}
-)
+    }
+})
