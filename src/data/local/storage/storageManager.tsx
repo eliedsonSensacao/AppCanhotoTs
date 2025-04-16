@@ -1,9 +1,10 @@
-import { Alert } from 'react-native';
+
 import { validate_data } from './utils/image/validateBarCode';
 import { replace_image, save_image } from './utils/image/storeImage';
 import { local_file_list } from './utils/file/fileListManager';
 import { ValidateStatus } from '../../utils/enums/enums';
 import { confirmAlert } from './utils/alerts/confirmAlert';
+import Toast from 'react-native-toast-message';
 
 export const store = async (cnpj: string, n_nota: string, serie: string, uri: string): Promise<void> => {
     try {
@@ -16,7 +17,7 @@ export const store = async (cnpj: string, n_nota: string, serie: string, uri: st
 
             if (userConfirmed) {
                 await replace_image(uri, cnpj, n_nota, serie);
-                Alert.alert("Armazenou com sucesso");
+                Toast.show({ type: 'success', text1: 'Imagem substituida com sucesso' })
             } else {
                 console.log("Usuário cancelou a substituição.");
                 return;
@@ -24,7 +25,7 @@ export const store = async (cnpj: string, n_nota: string, serie: string, uri: st
         } else if (validate == ValidateStatus.NAO_EXISTENTE) {
             try {
                 await save_image(uri, cnpj, n_nota, serie)
-                Alert.alert("Armazenou com sucesso");
+                Toast.show({ type: 'success', text1: 'Imagem armazenada com sucesso' })
             } catch (err: any) {
                 throw new Error(`Erro ao salvar: ${err.message}`)
             }
@@ -32,7 +33,7 @@ export const store = async (cnpj: string, n_nota: string, serie: string, uri: st
             throw new Error(`Erro: Algum dado pode estar faltando!`)
         }
     } catch (err: any) {
-        Alert.alert("Falha ao salvar imagem", `${err.message}`)
+        Toast.show({ type: 'error', text1: 'Falha ao salvar imagem', text2: err.message })
     }
 }
 
@@ -41,7 +42,7 @@ export const search = async () => {
         const list = await local_file_list()
         return list
     } catch (err: any) {
-        Alert.alert("Falha na recuperação de dados: " + err.message)
+        Toast.show({ type: 'error', text1: 'Falha na recuperação de dados:', text2: err.message })
     }
 }
 

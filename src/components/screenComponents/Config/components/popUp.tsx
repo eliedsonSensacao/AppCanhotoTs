@@ -2,6 +2,7 @@ import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput, Alert } fro
 import React, { useState } from 'react';
 import { get_admin_passwd, set_api_url, set_conection_method, set_device_name, set_device_passwd, set_device_token } from '@/src/Config/configFunctions';
 import { useRouter } from 'expo-router';
+import Toast from 'react-native-toast-message';
 
 
 interface PasswdPopUpProps {
@@ -10,7 +11,7 @@ interface PasswdPopUpProps {
     dataToValidate: ConfigData
 }
 
-export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, dataToValidate }) => {    
+export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, dataToValidate }) => {
     const [text, setText] = useState<string>('');
     const navigation = useRouter();
 
@@ -32,18 +33,18 @@ export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, d
                 await set_api_url(dataToValidate.url);
                 await set_conection_method(dataToValidate.method);
                 await set_device_token('');
-                Alert.alert("Configurações salvas");
+                Toast.show({ type: 'success', text1: 'Configurações salvas com sucesso' })
                 closePopup();
                 navigation.replace('/(tabs)/config');
             } catch (err: unknown) {
                 if (err instanceof Error) {
-                    Alert.alert("Erro ao salvar configuração: ", err.message)
+                    Toast.show({ type: 'error', text1: 'Erro ao salvar configuração', text2: err.message })
                 } else {
-                    Alert.alert("Erro desconhecido")
+                    Toast.show({ type: 'error', text1: 'Erro ao salvar configuração' })
                 }
             }
         } else {
-            Alert.alert("Erro!", " A senha que voce digitou esta incorreta!");
+            Alert.alert("Erro ao savar configuração", "Senha inorreta");
         }
     };
 

@@ -1,8 +1,7 @@
-import { Alert } from "react-native";
 import { get_img_info } from "../../local/storage/imageInfoList";
 import { store } from "../../local/storage/storageManager";
-import { CNPJ } from "../enums/enums"
-import { FileInfo } from "../interfaces/interfaces";
+import { CNPJ } from "../../utils/enums/enums";
+import { FileInfo } from "../../utils/interfaces/interfaces";
 
 export class AppPhoto {
     cnpj: string;

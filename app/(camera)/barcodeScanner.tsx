@@ -1,11 +1,12 @@
 import { BarcodeScanningResult, CameraView } from 'expo-camera';
 import { useNotasContext } from "@/src/Context/notaContext";
 import { useContext, useEffect, useRef } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useRouter } from 'expo-router';
 import { filterCodeBar } from '@/src/functions/Camera/scripts/barCodeFilter';
 import { PermissionContext } from '@/src/Context/permissionContext';
 import { ComponentCameraView } from '@/src/components/screenComponents/Camera/cameraView';
+import Toast from 'react-native-toast-message';
 
 export default function BarcodeScanner() {
     const { salvarDadosNota } = useNotasContext()
@@ -19,7 +20,7 @@ export default function BarcodeScanner() {
             if (!cameraPermission) {
                 const response = await requestCameraPermission();
                 if (!response?.granted) {
-                    Alert.alert("Permissão necessária", "A câmera é necessária para escanear códigos de barras.");
+                    Toast.show({ type: 'error', text1: 'Permissão não concedida' })
                     navigation.back();
                 }
             }
@@ -33,10 +34,10 @@ export default function BarcodeScanner() {
             salvarDadosNota(codeBarData.filteredCnpj, codeBarData.filteredSerie, codeBarData.filteredNota);
         } catch (err) {
             if (err instanceof Error) {
-                Alert.alert("Erro", err.message)
-            } else[
-                Alert.alert("Erro", "Erro desconhecido")
-            ]
+                Toast.show({ type: 'error', text1: 'Erro', text2: err.message })
+            } else {
+                Toast.show({ type: 'error', text1: 'Erro', text2: 'erro desconhecido' })
+            }
         } finally {
             if (cameraRef.current)
                 cameraRef.current.pausePreview()
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     },
     maskTop: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backgroundColor: '#00000050',
     },
     middleRow: {
         flexDirection: 'row',
@@ -81,17 +82,17 @@ const styles = StyleSheet.create({
     },
     maskSide: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backgroundColor: '#00000050',
     },
     scanArea: {
         width: '80%',
-        borderColor: '#ffee00',
-        borderWidth: 4,
+        borderColor: '#ff0000',
+        borderWidth: 1,
         borderRadius: 2,
         backgroundColor: 'transparent',
     },
     maskBottom: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backgroundColor: '#00000050',
     },
 });

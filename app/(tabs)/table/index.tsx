@@ -1,13 +1,14 @@
-import { Alert, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View, ListRenderItem } from 'react-native';
+import { FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View, ListRenderItem } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { ImagePopup } from '@/src/components/screenComponents/table/components/popUp';
 import { chk_files_to_del } from '@/src/data/local/storage/utils/file/chkFilesToDel';
 import { useRouter } from 'expo-router';
 import { local_file_list } from '@/src/data/local/storage/utils/file/fileListManager';
-import { AppPhoto } from '@/src/data/utils/models/appPhoto';
 import { FileInfo } from '@/src/data/utils/interfaces/interfaces';
 import { windowWidth } from '@/src/functions/utils/getScreenDimensions';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Toast from 'react-native-toast-message';
+import { AppPhoto } from '@/src/data/local/models/appPhoto';
 
 type TableRowProps = {
     item: FileInfo;
@@ -87,27 +88,35 @@ export default function Table() {
             }
             setData(infoList);
             setIsRefreshing(false);
-        } catch (error) {
-            Alert.alert('Erro:', error instanceof Error ? error.message : 'Unknown error');
+        } catch (err) {
+            if (err instanceof Error) {
+                throw err
+            } else {
+                throw new Error(`Erro desconhecido ao buscar dados`)
+            }
         }
     },
         []);
 
     useEffect(() => {
+        Toast.show({ type: 'info', text1: 'Dica:', text2: 'Arraste para baixo para enviar notas' })
         fetchData();
     }, [fetchData]);
 
     const onRefresh = useCallback(async () => {
         if (isRefreshing) return;
-
-        setIsRefreshing(true);
         try {
+            setIsRefreshing(true);
             await chk_files_to_del();
-            //await send_data_to_server();
             fetchData();
+            //await send_data_to_server();
             navigation.navigate('/(tabs)/table')
         } catch (err) {
-            Alert.alert('Erro', `Não foi possível atualizar os dados\n${err instanceof Error ? err.message : 'Unknown error'}`);
+            if (err instanceof Error) {
+                Toast.show({ type: 'error', text1: 'Erro', text2: err.message })
+            } else {
+                Toast.show({ type: 'error', text1: 'Erro', text2: 'Erro desconhecido ao atualizar' })
+            }
         } finally {
             setIsRefreshing(false);
         }

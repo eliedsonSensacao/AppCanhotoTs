@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "AppCanhoto",
-    "slug": "AppCanhoto",
-    "version": "2.0",
+    "name": "AppCanhoto2",
+    "slug": "AppCanhoto2",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "myapp",
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.sensacao.appcanhoto"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +37,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9d926590-2778-42f9-b0c6-f4b9c322764e"
+      }
+    },
+    "owner": "eliedsonsensacao"
   }
 }

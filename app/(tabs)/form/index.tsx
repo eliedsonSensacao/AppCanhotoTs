@@ -4,12 +4,14 @@ import CamButton from '@/src/components/screenComponents/Camera/Buttons/imgCamBu
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { useNotasContext } from '@/src/Context/notaContext';
 import InfoDisplay from '@/src/components/screenComponents/Form/display';
-import { StyleSheet, View, Alert } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useLoading } from '@/src/Context/loadingContext';
-import { AppPhoto } from '@/src/data/utils/models/appPhoto';
 import ComponentButton from '@/src/components/globalComponents/buttons/Button';
+import Toast from 'react-native-toast-message'
+import { get_device_name } from '@/src/Config/configFunctions';
+import { AppPhoto } from '@/src/data/local/models/appPhoto';
 
 
 export default function SendForm() {
@@ -25,7 +27,7 @@ export default function SendForm() {
       clearDadosNota();
       navigation.replace('/(tabs)/form')
     } catch (err: any) {
-      Alert.alert('Erro ao atualizar a página.', err.message)
+      Toast.show({ type: 'error', text1: 'Erro ao atualizar a página.', text2: err.message })
     } finally {
       setIsRefreshing(false)
     }
@@ -35,12 +37,17 @@ export default function SendForm() {
     try {
       setIsLoading(true);
       if (!dadosNota.cnpj || !dadosNota.n_nota || !dadosNota.img_uri) {
-        throw new Error("Não há dados para salvar")
+        throw new Error("Não foram encontrados dados para salvar")
+      }
+      const deviceName = await get_device_name();
+      if(deviceName === '' || !deviceName) {
+        throw new Error("Usuário não configurado")
       }
       const photo = new AppPhoto(dadosNota.cnpj, dadosNota.n_nota, dadosNota.img_uri);
       await photo.store();
     } catch (err: any) {
-      Alert.alert("Erro ao salvar imagem", err.message)
+      Toast.show({ type: 'error', text1: 'Erro ao salvar imagem', text2: err.message })
+     
       return;
     } finally {
       clearDadosNota()

@@ -6,10 +6,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { NotasProvider } from '@/src/Context/notaContext';
 import { LoadingProvider, useLoading } from '@/src/Context/loadingContext';
+import Toast from 'react-native-toast-message';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -18,6 +18,7 @@ function AppContent() {
   const { isLoading } = useLoading();
 
   return (
+
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NotasProvider>
@@ -26,6 +27,7 @@ function AppContent() {
             <Stack.Screen name="(camera)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
+          <Toast />
           {isLoading && (
             <View style={styles.overlay}>
               <ActivityIndicator size="large" color="#fff" />
@@ -34,6 +36,7 @@ function AppContent() {
           <StatusBar hidden />
         </NotasProvider>
       </GestureHandlerRootView>
+
     </ThemeProvider>
   );
 }
