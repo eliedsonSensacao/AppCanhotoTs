@@ -10,14 +10,13 @@ interface PasswdPopUpProps {
     dataToValidate: ConfigData
 }
 
-export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, dataToValidate }) => {
-    
+export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, dataToValidate }) => {    
     const [text, setText] = useState<string>('');
     const navigation = useRouter();
 
     const confirm_passwd = async (insertedPass: string) => {
         const adm_pass = await get_admin_passwd();
-        if (adm_pass != insertedPass) {
+        if (adm_pass !== insertedPass) {
             return false
         } else {
             return true
@@ -26,7 +25,7 @@ export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, d
 
     const saveConfig = async (insertedPass: string) => {
 
-        if (await confirm_passwd(insertedPass) == true) {
+        if (await confirm_passwd(insertedPass) === true) {
             try {
                 await set_device_passwd(dataToValidate.passwd);
                 await set_device_name(dataToValidate.deviceName);

@@ -17,9 +17,9 @@ export class AppPhoto {
 
     constructor(cnpj?: string, nNota?: string, uri?: string) {
         function getSerie() {
-            if (cnpj == CNPJ.MATRIZ) {
+            if (cnpj === CNPJ.MATRIZ) {
                 return '01'
-            } else if (cnpj == CNPJ.FILIAL) {
+            } else if (cnpj === CNPJ.FILIAL) {
                 return '06'
             } else {
                 return ''

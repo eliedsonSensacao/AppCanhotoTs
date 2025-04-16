@@ -1,4 +1,4 @@
-import { Alert, FlatList, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View, ListRenderItem } from 'react-native';
+import { Alert, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View, ListRenderItem } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { ImagePopup } from '@/src/components/screenComponents/table/components/popUp';
 import { chk_files_to_del } from '@/src/data/local/storage/utils/file/chkFilesToDel';
@@ -9,7 +9,6 @@ import { FileInfo } from '@/src/data/utils/interfaces/interfaces';
 import { windowWidth } from '@/src/functions/utils/getScreenDimensions';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-
 type TableRowProps = {
     item: FileInfo;
     index: number;
@@ -18,9 +17,6 @@ type TableRowProps = {
     closePopup: () => void;
 };
 
-type TableHeaderProps = {};
-
-
 const COLORS = {
     primary: '#0090CE',
     secondary: '#FFD749',
@@ -28,7 +24,7 @@ const COLORS = {
     black: '#000',
 };
 
-const TableHeader: React.FC<TableHeaderProps> = () => (
+const TableHeader: React.FC = () => (
     <View style={Styles.listRow}>
         <Text style={[Styles.title, Styles.listCell]}>Status</Text>
         <Text style={[Styles.title, Styles.listCell]}>Nota Fiscal</Text>
@@ -92,7 +88,7 @@ export default function Table() {
             setData(infoList);
             setIsRefreshing(false);
         } catch (error) {
-            console.error('Erro:', error instanceof Error ? error.message : 'Unknown error');
+            Alert.alert('Erro:', error instanceof Error ? error.message : 'Unknown error');
         }
     },
         []);
@@ -190,14 +186,14 @@ const Styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottomWidth: 1,
         borderBottomColor: COLORS.black,
-        
+
     },
     listCell: {
         textAlign: 'center',
         alignItems: 'center',
         width: '20%',
         paddingVertical: '1%',
-        
+
     },
     title: {
         fontWeight: 'bold',

@@ -4,7 +4,7 @@ export const filterCodeBar = async (info: string) => {
     try {
         let cnpj = info.slice(6, 20);
 
-        if (cnpj != CNPJ.MATRIZ && cnpj != CNPJ.FILIAL) {
+        if (cnpj !== CNPJ.MATRIZ && cnpj !== CNPJ.FILIAL) {
             throw new Error(`O CNPJ ${cnpj} não pertence à nenhum parceiro da Laticinios Mania`)
         }
 

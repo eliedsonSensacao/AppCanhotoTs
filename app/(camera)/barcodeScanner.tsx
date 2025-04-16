@@ -11,10 +11,11 @@ export default function BarcodeScanner() {
     const { salvarDadosNota } = useNotasContext()
     const navigation = useRouter();
     const cameraRef = useRef<CameraView>(null);
-    const { cameraPermission, requestCameraPermission } = useContext(PermissionContext)!;
+    const { cameraPermission } = useContext(PermissionContext)!;
 
     useEffect(() => {
         const checkPermissions = async () => {
+            const { cameraPermission, requestCameraPermission } = useContext(PermissionContext)!;
             if (!cameraPermission) {
                 const response = await requestCameraPermission();
                 if (!response?.granted) {
@@ -37,9 +38,10 @@ export default function BarcodeScanner() {
                 Alert.alert("Erro", "Erro desconhecido")
             ]
         } finally {
-            navigation.back();
             if (cameraRef.current)
                 cameraRef.current.pausePreview()
+            navigation.back();
+
         }
     };
 
