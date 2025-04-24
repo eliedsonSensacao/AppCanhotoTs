@@ -2,6 +2,7 @@ import { StyleSheet, TextInput, View, Text } from 'react-native';
 import React from 'react';
 import { useNotasContext } from '@/src/Context/notaContext';
 import { DadoNotaDisplay } from '@/src/data/utils/interfaces/interfaces';
+import StyledText from '@/src/components/globalComponents/StyledText';
 
 export default function InfoDisplay() {
 
@@ -17,9 +18,7 @@ export default function InfoDisplay() {
         <View style={Styles.displayBox}>
             {dados.map(dado => (
                 <View key={dado.id} style={Styles.txtSubBox}>
-                    <Text style={Styles.label}>
-                        {dado.text}
-                    </Text>
+                    <StyledText type='title'>{dado.text}</StyledText>
                     <TextInput
                         style={Styles.inputTxt}
                         editable={false}
@@ -36,25 +35,17 @@ export default function InfoDisplay() {
 const Styles = StyleSheet.create(
     {
         displayBox: {
-
             alignItems: 'flex-start',
             backgroundColor: '#CCEDFF30',
             borderRadius: 5,
             borderWidth: 1,
             borderColor: 'black',
-
         },
         txtSubBox: {
             alignItems: 'center',
             flexDirection: 'row',
             marginVertical: "3%",
             marginLeft: '10%'
-
-        },
-        label: {
-            fontSize: 20,
-            fontWeight: 'bold',
-            marginLeft: 5
         },
         inputTxt: {
             fontSize: 15,

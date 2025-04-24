@@ -1,8 +1,11 @@
 import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
 import React, { useState } from 'react';
-import { get_admin_passwd, set_api_url, set_conection_method, set_device_name, set_device_passwd, set_device_token } from '@/src/Config/configFunctions';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import { ConfigData } from '@/app/(tabs)/config';
+import { set_user_id, set_user_name, set_user_passwd } from '@/src/Config/user.config';
+import { set_api_url, set_conection_protocol, set_device_token } from '@/src/Config/api.config';
+import { get_admin_passwd } from '@/src/Config/admin.config';
 
 
 interface PasswdPopUpProps {
@@ -25,23 +28,24 @@ export const PasswdPopUp: React.FC<PasswdPopUpProps> = ({ visible, closePopup, d
     }
 
     const saveConfig = async (insertedPass: string) => {
-
         if (await confirm_passwd(insertedPass) === true) {
             try {
-                await set_device_passwd(dataToValidate.passwd);
-                await set_device_name(dataToValidate.deviceName);
-                await set_api_url(dataToValidate.url);
-                await set_conection_method(dataToValidate.method);
+                await set_user_id(dataToValidate.userId)
+                await set_user_passwd(dataToValidate.userPasswd);
+                await set_user_name(dataToValidate.userName);
+                await set_api_url(dataToValidate.apiUrl);
+                await set_conection_protocol(dataToValidate.protocol);
                 await set_device_token('');
                 Toast.show({ type: 'success', text1: 'Configurações salvas com sucesso' })
-                closePopup();
-                navigation.replace('/(tabs)/config');
             } catch (err: unknown) {
                 if (err instanceof Error) {
                     Toast.show({ type: 'error', text1: 'Erro ao salvar configuração', text2: err.message })
                 } else {
                     Toast.show({ type: 'error', text1: 'Erro ao salvar configuração' })
                 }
+            } finally {
+                closePopup();
+                navigation.replace('/(tabs)/config');
             }
         } else {
             Alert.alert("Erro ao savar configuração", "Senha inorreta");

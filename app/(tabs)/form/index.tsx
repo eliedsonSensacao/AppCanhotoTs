@@ -10,8 +10,8 @@ import { useState } from 'react';
 import { useLoading } from '@/src/Context/loadingContext';
 import ComponentButton from '@/src/components/globalComponents/buttons/Button';
 import Toast from 'react-native-toast-message'
-import { get_device_name } from '@/src/Config/configFunctions';
 import { AppPhoto } from '@/src/data/local/models/appPhoto';
+import { get_user_name } from '@/src/Config/user.config';
 
 
 export default function SendForm() {
@@ -39,15 +39,15 @@ export default function SendForm() {
       if (!dadosNota.cnpj || !dadosNota.n_nota || !dadosNota.img_uri) {
         throw new Error("Não foram encontrados dados para salvar")
       }
-      const deviceName = await get_device_name();
-      if(deviceName === '' || !deviceName) {
+      const deviceName = await get_user_name();
+      if (deviceName === '' || !deviceName) {
         throw new Error("Usuário não configurado")
       }
       const photo = new AppPhoto(dadosNota.cnpj, dadosNota.n_nota, dadosNota.img_uri);
       await photo.store();
     } catch (err: any) {
       Toast.show({ type: 'error', text1: 'Erro ao salvar imagem', text2: err.message })
-     
+
       return;
     } finally {
       clearDadosNota()

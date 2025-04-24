@@ -1,18 +1,25 @@
 import { ImageStatus } from "../enums/enums";
 
-export interface ConfigType {
+export interface UserConfig {
+    USER: {
+        id: string;
+        name: string;
+        passwd: string;
+    };
+}
+
+export interface AdminConfig {
+    ADMIN: {
+        passwd: string;
+    };
+}
+
+export interface ApiConfig {
     API: {
         url: string;
         body_encript_key: string;
-        method: string;
-    };
-    DEVICE: {
-        name: string;
-        passwd: string;
+        protocol: string;
         token: string;
-    };
-    ADMIN: {
-        passwd: string;
     };
 }
 
@@ -25,7 +32,6 @@ export interface FileInfo {
     date: string;
     deviceName: string;
 }
-
 
 export interface DadoNotaDisplay {
     id: string;

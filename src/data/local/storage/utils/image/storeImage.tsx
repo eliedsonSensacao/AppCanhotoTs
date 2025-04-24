@@ -3,11 +3,11 @@ import * as FileSystem from 'expo-file-system';
 import { resizeImage } from './resizeImg';
 import { generate_path, get_image_path } from '../storagePath/storagePath';
 import { get_local_file } from '../file/getFile';
-import { add_file_info, get_img_info, rm_from_infoList, update_file_info } from '../../imageInfoList';
+import { add_file_info, update_file_info } from '../../imageInfoList';
 import { resolve_date } from '../date/resolveDate';
-import { get_device_name } from '@/src/Config/configFunctions';
 import { ImageStatus } from '@/src/data/utils/enums/enums';
 import { FileInfo } from '@/src/data/utils/interfaces/interfaces';
+import { get_user_name } from '@/src/Config/user.config';
 
 export async function save_image(uri: string, cnpj: string, n_nota: string, serie: string) {
     try {
@@ -22,7 +22,7 @@ export async function save_image(uri: string, cnpj: string, n_nota: string, seri
             serie: serie,
             uri: destinationPath,
             date: await resolve_date(),
-            deviceName: await get_device_name()
+            deviceName: await get_user_name()
         }
         await add_file_info(fileInfo);
     } catch (err: unknown) {
@@ -54,7 +54,7 @@ export async function replace_image(uri: string, cnpj: string, n_nota: string, s
             serie: serie,
             uri: destinationPath,
             date: await resolve_date(),
-            deviceName: await get_device_name()
+            deviceName: await get_user_name()
         }
         await resize_and_save_image(uri, destinationPath);
         await update_file_info(NewFileInfo);

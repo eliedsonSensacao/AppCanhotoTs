@@ -1,30 +1,46 @@
 
-import { View, TextInput, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
+import { View, TextInput, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Picker } from '@react-native-picker/picker'
 import React, { useEffect, useState } from 'react';
-import { get_api_url, get_conection_method, get_device_name, get_device_passwd } from '@/src/Config/configFunctions';
 import { PasswdPopUp } from '@/src/components/screenComponents/Config/components/popUp';
 import ComponentButton from '@/src/components/globalComponents/buttons/Button';
 import Toast from 'react-native-toast-message';
+import { get_user_id, get_user_name, get_user_passwd } from '@/src/Config/user.config';
+import { get_api_url, get_conection_protocol } from '@/src/Config/api.config';
+import StyledText from '@/src/components/globalComponents/StyledText';
+
+
+export type ConfigData = {
+    userId: string
+    userName: string,
+    userPasswd: string,
+    apiUrl: string,
+    protocol: string
+};
 
 export default function SettingsScreen() {
-    const [deviceName, setDeviceName] = useState('');
-    const [url, setUrl] = useState('');
-    const [passwd, setPasswd] = useState('');
-    const [method, setMethod] = useState('');
+    const [userId, setUserId] = useState('');
+    const [userName, setuserName] = useState('');
+    const [userPasswd, setuserPasswd] = useState('');
+    const [apiUrl, setApiUrl] = useState('');
+    const [protocol, setProtocol] = useState('');
     const [visible, setVisible] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     async function load_info() {
         try {
-            const stored_name = await get_device_name();
-            const stored_passwd = await get_device_passwd();
-            const stored_url = await get_api_url();
-            const stored_method = await get_conection_method();
-            setDeviceName(stored_name);
-            setPasswd(stored_passwd);
-            setUrl(stored_url);
-            setMethod(stored_method)
+            const stored_userId = await get_user_id();
+            const stored_userName = await get_user_name();
+            const stored_userPasswd = await get_user_passwd();
+            const stored_apiUrl = await get_api_url();
+            const stored_protocol = await get_conection_protocol();
+
+            setUserId(stored_userId);
+            setuserName(stored_userName);
+            setuserPasswd(stored_userPasswd);
+            setApiUrl(stored_apiUrl);
+            setProtocol(stored_protocol)
+
         } catch (err) {
             if (err instanceof Error) {
                 throw new Error(err.message)
@@ -46,10 +62,11 @@ export default function SettingsScreen() {
     }
 
     const data: ConfigData = {
-        deviceName: deviceName,
-        url: url,
-        passwd: passwd,
-        method: method
+        userId: userId,
+        userName: userName,
+        userPasswd: userPasswd,
+        apiUrl: apiUrl,
+        protocol: protocol
     }
 
     const onRefresh = async () => {
@@ -74,21 +91,27 @@ export default function SettingsScreen() {
                 progressBackgroundColor="#0090ced6" />
             }>
             <View style={styles.subContainer}>
-                <Text style={styles.title}>Configurações de usuário</Text>
-                <Text style={styles.subTitle}>Usuário:</Text>
+                <StyledText type='title'>Configurações de Usuário</StyledText>
+                <StyledText type='subtitle'>Usuário</StyledText>
+                <TextInput
+                    style={styles.input}
+                    placeholder="  ID de Usuário"
+                    value={userId}
+                    onChangeText={(text) => setUserId(text.trim())}
+                />
                 <TextInput
                     style={styles.input}
                     placeholder="  Informe o nome de usuário"
-                    value={deviceName}
-                    onChangeText={(text) => setDeviceName(text.trim())}
+                    value={userName}
+                    onChangeText={(text) => setuserName(text.trim())}
                 />
-                <Text style={styles.subTitle}>Senha de acesso ao servidor:</Text>
+
                 <TextInput
                     secureTextEntry={true}
                     style={styles.input}
-                    placeholder="  Insira sua senha"
-                    value={passwd}
-                    onChangeText={(text) => setPasswd(text.trim())}
+                    placeholder="  Senha"
+                    value={userPasswd}
+                    onChangeText={(text) => setuserPasswd(text.trim())}
                 />
                 <PasswdPopUp
                     visible={visible}
@@ -97,21 +120,22 @@ export default function SettingsScreen() {
                 />
             </View>
             <View style={styles.subContainer}>
-                <Text style={styles.title}>Conexão</Text>
-                <Text>Metodo de envio:</Text>
+                <StyledText type='title'>Conexão</StyledText>
+                <StyledText type='subtitle'>Usuário</StyledText>
+                <StyledText>Metodo de Envio:</StyledText>
                 <Picker
-                    selectedValue={method}
-                    onValueChange={(itemValue) => setMethod(itemValue)}
+                    selectedValue={protocol}
+                    onValueChange={(itemValue) => setProtocol(itemValue)}
                 >
-                    <Picker.Item label="Http" value="http://" />
-                    <Picker.Item label="Https" value="https://" />
+                    <Picker.Item label="HTTP" value="http://" />
+                    <Picker.Item label="HTTPS" value="https://" />
                 </Picker>
-                <Text>Endereço do servidor:</Text>
+                <StyledText>Endereço do Servidor:</StyledText>
                 <TextInput
                     style={styles.input}
                     placeholder=" seuenderecoaqui.com/canhotoapi"
-                    value={url}
-                    onChangeText={(text) => setUrl(text.trim())}
+                    value={apiUrl}
+                    onChangeText={(text) => setApiUrl(text.trim())}
                 />
             </View>
             <View style={styles.saveBtnPos}>
@@ -134,17 +158,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginVertical: 10
     },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        textAlign: 'center',
-    },
-    subTitle: {
-        fontSize: 15,
-        marginBottom: 2,
-        textAlign: 'left',
-    },
     input: {
         height: 50,
         borderColor: '#ccc',
@@ -157,22 +170,5 @@ const styles = StyleSheet.create({
     saveBtnPos: {
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    saveBtn: {
-        elevation: 4,
-        justifyContent: 'center',
-        height: '30%',
-        width: '40%',
-        borderRadius: 3,
-        backgroundColor: '#ffea00'
-    },
-    text: {
-        fontSize: 10,
-        alignSelf: 'center',
-        fontWeight: 'bold'
-    },
-    pressed: {
-        backgroundColor: '#cfbe0a',
-        transform: [{ scale: 0.95 }]
     }
 });

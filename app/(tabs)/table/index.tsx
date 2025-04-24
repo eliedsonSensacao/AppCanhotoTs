@@ -9,6 +9,7 @@ import { windowWidth } from '@/src/functions/utils/getScreenDimensions';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Toast from 'react-native-toast-message';
 import { AppPhoto } from '@/src/data/local/models/appPhoto';
+import StyledText from '@/src/components/globalComponents/StyledText';
 
 type TableRowProps = {
     item: FileInfo;
@@ -27,25 +28,25 @@ const COLORS = {
 
 const TableHeader: React.FC = () => (
     <View style={Styles.listRow}>
-        <Text style={[Styles.title, Styles.listCell]}>Status</Text>
-        <Text style={[Styles.title, Styles.listCell]}>Nota Fiscal</Text>
-        <Text style={[Styles.title, Styles.listCell]}>Série</Text>
-        <Text style={[Styles.title, Styles.listCell]}>CNPJ</Text>
-        <Text style={[Styles.title, Styles.listCell]}>Foto</Text>
+        <StyledText style={[Styles.listCell, Styles.titleBackground]} type='title'>Status</StyledText>
+        <StyledText style={[Styles.listCell, Styles.titleBackground]} type='title'>Nota Fiscal</StyledText>
+        <StyledText style={[Styles.listCell, Styles.titleBackground]} type='title'>Série</StyledText>
+        <StyledText style={[Styles.listCell, Styles.titleBackground]} type='title'>CNPJ</StyledText>
+        <StyledText style={[Styles.listCell, Styles.titleBackground]} type='title'>Foto</StyledText>
     </View>
 );
 
 const TableRow: React.FC<TableRowProps> = ({ item, index, showPopup, visible, closePopup }) => (
     <View style={Styles.listRow}>
-        <Text style={[Styles.text, Styles.listCell]}>{item.status}</Text>
-        <Text style={[Styles.text, Styles.listCell]} >{item.nNota}</Text>
-        <Text style={[Styles.text, Styles.listCell]}>{item.serie}</Text>
-        <Text style={[Styles.text, Styles.listCell]}>{item.cnpj}</Text>
+        <StyledText style={[Styles.itemBackground, Styles.listCell]} type='subtitle'>{item.status}</StyledText>
+        <StyledText style={[Styles.itemBackground, Styles.listCell]} type='subtitle'>{item.nNota}</StyledText>
+        <StyledText style={[Styles.itemBackground, Styles.listCell]} type='subtitle'>{item.serie}</StyledText>
+        <StyledText style={[Styles.itemBackground, Styles.listCell]} type='subtitle'>{item.cnpj}</StyledText>
         <Pressable
             key={index}
             onPress={() => showPopup(index)}
             style={({ pressed }) => [
-                Styles.listCell, Styles.text,
+                Styles.listCell, Styles.itemBackground,
                 { opacity: pressed ? 0.5 : 1 }
             ]}
         >
@@ -65,6 +66,7 @@ export default function Table() {
     const [data, setData] = useState<FileInfo[]>([]);
     const [visible, setVisible] = useState<number | null>(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [count, setCount] = useState<number>(0)
 
     const showPopup = useCallback((index: number) => {
         setVisible(index);
@@ -99,8 +101,13 @@ export default function Table() {
         []);
 
     useEffect(() => {
-        Toast.show({ type: 'info', text1: 'Dica:', text2: 'Arraste para baixo para enviar notas' })
+        console.log(count)
         fetchData();
+        if (count <= 3) {
+            Toast.show({ type: 'info', text1: 'Arraste para baixo para enviar notas' })
+            setCount(count + 1)
+        }
+        console.log(count)
     }, [fetchData]);
 
     const onRefresh = useCallback(async () => {
@@ -195,66 +202,17 @@ const Styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottomWidth: 1,
         borderBottomColor: COLORS.black,
-
     },
     listCell: {
         textAlign: 'center',
         alignItems: 'center',
         width: '20%',
         paddingVertical: '1%',
-
     },
-    title: {
-        fontWeight: 'bold',
+    titleBackground: {
         backgroundColor: COLORS.secondary
     },
-    text: {
+    itemBackground: {
         backgroundColor: COLORS.white
     }
-
 });
-
-
-// const Styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         height: '100%',
-//         width: '100%',
-//         backgroundColor: COLORS.primary,
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//     },
-//     tblPos: {
-//         width: '90%',
-//         marginVertical: '10%',
-//         borderRadius: 5,
-//         backgroundColor: COLORS.secondary,
-//     },
-//     flatList: {
-//         flexGrow: 1,
-//         height: '90%',
-//         minWidth: '100%',
-//         backgroundColor: COLORS.white,
-//     },
-//     tabBody: {
-//         backgroundColor: COLORS.primary,
-//         width: '100%'
-//     },
-//     rowStyle: {
-//         backgroundColor: COLORS.white,
-//         flexDirection: 'row',
-//         minWidth: '100%',
-//     },
-//     cell: {
-//         textAlign: 'center',
-//         alignItems: 'center',
-//         paddingVertical: '1.5%',
-//         minWidth: '20%',
-//     },
-//     title: {
-//         fontWeight: 'bold',
-//         backgroundColor: COLORS.secondary,
-//         borderBottomColor: COLORS.black,
-//         borderBottomWidth: 1
-//     },
-// });
